@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Голосование ЕПН</title>
+  <title>Голосование Евровидение</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
     h1 { color: #333; }
@@ -14,7 +14,7 @@
 </head>
 <body>
 
-<h1>Голосование ЕПН</h1>
+<h1>Голосование Евровидение</h1>
 
 <div id="voteContainer"></div>
 
@@ -23,7 +23,9 @@
 <div id="result"></div>
 
 <script>
-  // Список стран
+document.addEventListener("DOMContentLoaded", function() {
+
+  // Список стран — можно добавить свои
   const countries = ["France", "Spain", "Italy", "Germany", "Sweden", "Norway"];
 
   // Баллы в порядке убывания
@@ -63,14 +65,15 @@
     s.addEventListener('change', updateSelects);
   });
 
-  function submitVote() {
+  // Функция отправки голоса
+  window.submitVote = function() {
     const selected = selects.map(s => s.value);
     if (selected.includes("")) {
       alert("Пожалуйста, выберите страну для каждого балла!");
       return;
     }
 
-    // Проверка уникальности (на всякий случай)
+    // Проверка уникальности
     const unique = new Set(selected);
     if (unique.size !== selected.length) {
       alert("Ошибка: одна страна выбрана несколько раз!");
@@ -87,7 +90,3 @@
     // Блокируем выбор после отправки
     selects.forEach(s => s.disabled = true);
   }
-</script>
-
-</body>
-</html>
