@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Голосование Евровидение</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h1 { color: #333; }
+    label { display: block; margin-top: 10px; }
+    select { margin-bottom: 10px; display: block; }
+    button { padding: 10px 20px; font-size: 16px; margin-top: 15px; }
+    #result { margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<h1>Голосование Евровидение</h1>
+
+<div id="voteContainer"></div>
+
+<button onclick="submitVote()">Отправить голос</button>
+
+<div id="result"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+  // Список стран — можно добавить свои
+  const countries = ["France", "Spain", "Italy", "Germany", "Sweden", "Norway"];
+
+  // Баллы в порядке убывания
+  const points = [12,10,8,7,6,5,4,3,2,1];
+
+  const voteContainer = document.getElementById('voteContainer');
+  const selects = [];
+
+  // Создаём выпадающие списки для всех баллов
+  points.forEach(p => {
+    const label = document.createElement('label');
+    label.textContent = ${p} баллов:;
+    const select = document.createElement('select');
+    select.innerHTML = <option value="">-- Выберите страну --</option>;
+    countries.forEach(c => select.appendChild(new Option(c, c)));
+    voteContainer.appendChild(label);
+    voteContainer.appendChild(select);
+    selects.push(select);
+  });
+
+  // Обновляем варианты для последующих списков
+  function updateSelects() {
+    let chosen = selects.map(s => s.value).filter(v => v);
+    selects.forEach((s, i) => {
+      const current = s.value;
+      s.innerHTML = <option value="">-- Выберите страну --</option>;
+      countries.forEach(c => {
+        if (!chosen.includes(c) || c === current) {
+          s.appendChild(new Option(c, c));
+        }
+      });
+      s.value = current;
+    });
+  }
+
+  selects.forEach(s => {
+    s.addEventListener('change', updateSelects);
+  });
+
+  // Функция отправки голоса
+  window.submitVote = function() {
+    const selected = selects.map(s => s.value);
+    if (selected.includes("")) {
+      alert("Пожалуйста, выберите страну для каждого балла!");
+      return;
+    }
+
+    // Проверка уникальности
+    const unique = new Set(selected);
+    if (unique.size !== selected.length) {
+      alert("Ошибка: одна страна выбрана несколько раз!");
+      return;
+    }
+
+    const resultDiv = document.getElementById('result');
+    let html = "Ваш голос:<br>";
+    points.forEach((p, i) => {
+      html += ${p} баллов → ${selected[i]}<br>;
+    });
+    resultDiv.innerHTML = html;
+
+    // Блокируем выбор после отправки
+    selects.forEach(s => s.disabled = true);
+  }
